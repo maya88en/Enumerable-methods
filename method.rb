@@ -99,6 +99,10 @@ module Enumerable
 
   def multiply_els
     return true unless block_given?
+<<<<<<< HEAD
+=======
+
+>>>>>>> enumerable_methods
     my_inject(1) { |x, y| x * y }
   end
 end
@@ -111,5 +115,6 @@ puts arr.my_any?(5)
 puts arr.my_none?(5)
 
 puts arr.my_inject{ |final_val, x| final_val + x }
+#puts arr.my_inject { |final_val, x| final_val + x }
 
 puts arr.my_inject(:+)
