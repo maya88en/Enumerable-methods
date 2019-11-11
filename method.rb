@@ -99,10 +99,7 @@ module Enumerable
 
   def multiply_els
     return true unless block_given?
-<<<<<<< HEAD
-=======
 
->>>>>>> enumerable_methods
     my_inject(1) { |x, y| x * y }
   end
 end
