@@ -64,8 +64,6 @@ module Enumerable
   end
 
   def my_count(num = nil)
-    return true unless block_given?
-
     count = 0
     if block_given?
       my_each { |el| count += 1 if yield el }
@@ -105,12 +103,18 @@ module Enumerable
 end
 
 arr = [1, 2, 3, 4]
-puts arr.my_all?(3)
+# puts arr.my_all?(3)
 
-puts arr.my_any?(5)
+# puts arr.my_any?(5)
 
-puts arr.my_none?(5)
+# puts arr.my_none?(5)
 
-#puts arr.my_inject { |final_val, x| final_val + x }
+# puts arr.my_inject { |final_val, x| final_val + x }
 
-puts arr.my_inject(:+)
+# puts arr.my_inject(:+)
+
+puts arr.my_count
+
+puts arr.count
+
+# puts arr.count == arr.my_count
