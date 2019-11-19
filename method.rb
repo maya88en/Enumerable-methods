@@ -13,14 +13,6 @@ module Enumerable
     self
   end
 
-  # def my_each
-  # return to_enum unless block_given?
-
-  # (0...length).each do |i|
-  # yield(self[i])
-  # end
-  # end
-
   def my_each_with_index
     return to_enum unless block_given?
 
@@ -44,10 +36,6 @@ module Enumerable
   def my_all?(pattern = nil)
     if block_given?
       my_each { |i| return false unless yield(i) }
-      # elsif pattern.class == Class
-      # my_each { |i| return false unless ar[i].class.ancestors.include? pattern }
-      # elsif pattern.class == Regexp
-      # my_each { |i| return false unless ar[i] =~ pattern }
     elsif pattern.nil? == true
       my_each { |i| return false unless i }
     else
@@ -70,79 +58,6 @@ module Enumerable
   def my_none?(pattern = nil, &block)
     !my_any?(pattern, &block)
   end
-
-  # def my_none?(pattern = nil)
-  #   if block_given?
-  #     my_each { |i| return true unless yield(i) }
-  #   elsif pattern.nil? == false
-  #     my_each { |i| return true unless i }
-  #   else
-  #     my_each { |i| return true unless pattern === i }
-  #   end
-  #   false
-  # end
-
-  # def my_all?(pattern = nil)
-  # i = 0
-  # ar = self
-  #   while i < ar.size
-  #     if block_given? == true
-  #       return false unless yield(ar[i])
-  #     elsif pattern.class == Class
-  #       return false unless ar[i].class.ancestors.include? pattern
-  #     elsif pattern.class == Regexp
-  #       return false unless ar[i] =~ pattern
-  #     elsif pattern.nil? == true
-  #       return false unless ar[i]
-  #     else
-  #       return false unless pattern[i] == ar[i]
-  #     end
-  #     i += 1
-  #   end
-  #   true
-  # end
-
-  # def my_any?(pattern = nil)
-  #   i = 0
-  #   ar = self
-  #   while i < ar.size
-  #     if block_given? == true
-  #       return true if yield(ar[i])
-  #     elsif pattern.class == Class
-  #       return true if ar[i].class.ancestors.include? pattern
-  #     elsif pattern.class == Regexp
-  #       return true if ar[i] =~ pattern
-  #     elsif pattern.nil? == true
-  #       return true if ar[i]
-  #     elsif pattern[i] == ar[i]
-  #       return true
-  #     end
-
-  #     i += 1
-  #   end
-  #   false
-  # end
-
-  # def my_none?(pattern = nil)
-  #   i = 0
-  #   ar = self
-  #   while i < ar.size
-  #     if block_given? == true
-  #       return false if yield (ar[i])
-  #     elsif pattern.class == Class
-  #       return false if ar[i].class.ancestors.include? pattern
-  #     elsif pattern.class == Regexp
-  #       return false if ar[i] =~ pattern
-  #     elsif pattern.nil? == true
-  #       return false if ar[i]
-  #     elsif pattern[i] == ar[i]
-  #       return false
-  #     end
-
-  #     i += 1
-  #   end
-  #   true
-  # end
 
   def my_count(num = nil)
     count = 0
@@ -175,12 +90,7 @@ module Enumerable
     end
     result
   end
-
-  #   def multiply_els
-  #     return true unless block_given?
-
-  #     my_inject(1) { |x, y| x * y }
-  #   end
+  
 end
 
 def multiply_els(array)
