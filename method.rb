@@ -4,10 +4,22 @@ module Enumerable
   def my_each
     return to_enum unless block_given?
 
-    (0...length).each do |i|
-      yield(self[i])
+    arr = to_a
+    i = 0
+    while i < arr.length
+      yield(arr[i])
+      i += 1
     end
+    self
   end
+
+  # def my_each
+  # return to_enum unless block_given?
+
+  # (0...length).each do |i|
+  # yield(self[i])
+  # end
+  # end
 
   def my_each_with_index
     return to_enum unless block_given?
@@ -30,67 +42,107 @@ module Enumerable
   end
 
   def my_all?(pattern = nil)
-    i = 0
-    ar = self
-
-    while i < ar.size
-      if block_given? == true
-        return false unless yield(ar[i])
-      elsif pattern.class == Class
-        return false unless ar[i].class.ancestors.include? pattern
-      elsif pattern.class == Regexp
-        return false unless ar[i] =~ pattern
-      elsif pattern.nil? == true
-        return false unless ar[i]
-      else
-        return false unless pattern[i] == ar[i]
-      end
-      i += 1
+    if block_given?
+      my_each { |i| return false unless yield(i) }
+      # elsif pattern.class == Class
+      # my_each { |i| return false unless ar[i].class.ancestors.include? pattern }
+      # elsif pattern.class == Regexp
+      # my_each { |i| return false unless ar[i] =~ pattern }
+    elsif pattern.nil? == true
+      my_each { |i| return false unless i }
+    else
+      my_each { |i| return false unless pattern === i }
     end
     true
   end
 
   def my_any?(pattern = nil)
-    i = 0
-    ar = self
-    while i < ar.size
-      if block_given? == true
-        return true if yield(ar[i])
-      elsif pattern.class == Class
-        return true if ar[i].class.ancestors.include? pattern
-      elsif pattern.class == Regexp
-        return true if ar[i] =~ pattern
-      elsif pattern.nil? == true
-        return true if ar[i]
-      elsif pattern[i] == ar[i]
-        return true
-      end
-
-      i += 1
+    if block_given?
+      my_each { |i| return true if yield(i) }
+    elsif pattern.nil?
+      my_each { |i| return true if i }
+    else
+      my_each { |i| return true if pattern === i }
     end
     false
   end
 
-  def my_none?(pattern = nil)
-    i = 0
-    ar = self
-    while i < ar.size
-      if block_given? == true
-        return false if yield (ar[i])
-      elsif pattern.class == Class
-        return false if ar[i].class.ancestors.include? pattern
-      elsif pattern.class == Regexp
-        return false if ar[i] =~ pattern
-      elsif pattern.nil? == true
-        return false if ar[i]
-      elsif pattern[i] == ar[i]
-        return false
-      end
-
-      i += 1
-    end
-    true
+  def my_none?(pattern = nil, &block)
+    !my_any?(pattern, &block)
   end
+
+  # def my_none?(pattern = nil)
+  #   if block_given?
+  #     my_each { |i| return true unless yield(i) }
+  #   elsif pattern.nil? == false
+  #     my_each { |i| return true unless i }
+  #   else
+  #     my_each { |i| return true unless pattern === i }
+  #   end
+  #   false
+  # end
+
+  # def my_all?(pattern = nil)
+  # i = 0
+  # ar = self
+  #   while i < ar.size
+  #     if block_given? == true
+  #       return false unless yield(ar[i])
+  #     elsif pattern.class == Class
+  #       return false unless ar[i].class.ancestors.include? pattern
+  #     elsif pattern.class == Regexp
+  #       return false unless ar[i] =~ pattern
+  #     elsif pattern.nil? == true
+  #       return false unless ar[i]
+  #     else
+  #       return false unless pattern[i] == ar[i]
+  #     end
+  #     i += 1
+  #   end
+  #   true
+  # end
+
+  # def my_any?(pattern = nil)
+  #   i = 0
+  #   ar = self
+  #   while i < ar.size
+  #     if block_given? == true
+  #       return true if yield(ar[i])
+  #     elsif pattern.class == Class
+  #       return true if ar[i].class.ancestors.include? pattern
+  #     elsif pattern.class == Regexp
+  #       return true if ar[i] =~ pattern
+  #     elsif pattern.nil? == true
+  #       return true if ar[i]
+  #     elsif pattern[i] == ar[i]
+  #       return true
+  #     end
+
+  #     i += 1
+  #   end
+  #   false
+  # end
+
+  # def my_none?(pattern = nil)
+  #   i = 0
+  #   ar = self
+  #   while i < ar.size
+  #     if block_given? == true
+  #       return false if yield (ar[i])
+  #     elsif pattern.class == Class
+  #       return false if ar[i].class.ancestors.include? pattern
+  #     elsif pattern.class == Regexp
+  #       return false if ar[i] =~ pattern
+  #     elsif pattern.nil? == true
+  #       return false if ar[i]
+  #     elsif pattern[i] == ar[i]
+  #       return false
+  #     end
+
+  #     i += 1
+  #   end
+  #   true
+  # end
 
   def my_count(num = nil)
     count = 0
@@ -99,7 +151,7 @@ module Enumerable
     elsif num
       my_each { |el| count += 1 if el == num }
     else
-      count = length
+      my_each { count += 1 }
     end
     count
   end
@@ -124,22 +176,26 @@ module Enumerable
     result
   end
 
-  def multiply_els
-    return true unless block_given?
+  #   def multiply_els
+  #     return true unless block_given?
 
-    my_inject(1) { |x, y| x * y }
-  end
+  #     my_inject(1) { |x, y| x * y }
+  #   end
 end
 
-arr = [1, 2, 3, 4]
+def multiply_els(array)
+  array.my_inject(1) { |x, y| x * y }
+end
 
-#puts [1,2,3,4].my_each
+#arr = [1, 2, 3, 4]
 
-#puts [1,2,3,4].my_each_with_index
+# puts [1,2,3,4].my_each
 
-#puts [1,2,3,4].my_select
+# puts [1,2,3,4].my_each_with_index
 
-#puts [1,2,3,4].my_map
+# puts [1,2,3,4].my_select
+
+# puts [1,2,3,4].my_map
 
 # puts [1, 3.14, 42].my_all?(Integer)
 # puts [1, 2, 3, 4].my_all?(Integer)
@@ -156,21 +212,21 @@ arr = [1, 2, 3, 4]
 
 # puts ['car', 'bear', 'boy'].my_any?(/t/)
 
-#p [1,2,3,4].my_any?(4)
+# p [1,2,3,4].my_any?(4)
 
-#p [1,2,3,5].my_any?(4)
+# p [1,2,3,5].my_any?(4)
 
-# puts [1, 3.14, 42].my_none?(Integer) 
+# puts [1, 3.14, 42].my_none?(Integer)
 
-#puts [1, 3.14, 42].my_none?(String)
+# puts [1, 3.14, 42].my_none?(String)
 
 # p ['ant', 'bear', 'boy'].my_none?(/t/)
 
-#p ['car', 'bear', 'boy'].my_none?(/t/)
+# p ['car', 'bear', 'boy'].my_none?(/t/)
 
-#p [5, 6, 7, 8, 9, 10].inject { |sum, n| sum + n }
+# p [5, 6, 7, 8, 9, 10].inject { |sum, n| sum + n }
 
-#p [5, 6, 7, 8, 9, 10].inject(:+)
+# p [5, 6, 7, 8, 9, 10].inject(:+)
 
 # puts arr.my_all?(3)
 
@@ -182,10 +238,65 @@ arr = [1, 2, 3, 4]
 
 # puts arr.my_inject(:+)
 
-#puts arr.my_count
+# puts arr.my_count
 
-#puts arr.my_inject{ |final_val, x| final_val + x }
-#puts arr.my_inject { |final_val, x| final_val + x }
-#puts arr.count
+# puts arr.my_inject{ |final_val, x| final_val + x }
+# puts arr.my_inject { |final_val, x| final_val + x }
+# puts arr.count
 
 # puts arr.count == arr.my_count
+
+# p (%w[ant bear cat].my_all? { |word| word.length >= 3 })
+# #=> true
+# p %w[ant bear cat].my_all? { |word| word.length >= 4 }
+# #=> false
+# p %w[ant bear cat].my_all?(/t/)
+# #=> false
+# p [1, 2i, 3.14].my_all?(Numeric)
+# #=> true
+# p [nil, true, 99].my_all?
+# #=> false
+# p [].my_all?
+# #=> true
+
+# p %w[ant bear cat].my_any? { |word| word.length >= 3 }
+# #=> true
+# p %w[ant bear cat].my_any? { |word| word.length >= 4 }
+# #=> true
+# p %w[ant bear cat].my_any?(/d/)
+# #=> false
+# p [nil, true, 99].my_any?(Integer)
+# #=> true
+# p [nil, true, 99].my_any?
+# #=> true
+# p [].my_any?
+# #=> false
+
+# p %w[ant bear cat].my_none? { |word| word.length == 5 }
+# #=> true
+# p %w[ant bear cat].my_none? { |word| word.length >= 4 }
+# #=> false
+# p %w[ant bear cat].my_none?(/d/)
+# #=> true
+# p [1, 3.14, 42].my_none?(Float)
+# #=> false
+# p [].my_none?
+# #=> true
+# p [nil].my_none?
+# #=> true
+# p [nil, false].my_none?
+# #=> true
+# p [nil, false, true].my_none?
+# #=> false
+
+#p multiply_els([2, 4, 5]) #=> 40
+
+ary = [1, 2, 4, 2]
+p ary.my_count               
+#=> 4
+p ary.my_count(2)            
+#=> 2
+p ary.my_count{ |x| x%2==0 } 
+#=> 3
+p (0..9).my_count
+#=> 10
