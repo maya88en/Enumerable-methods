@@ -16,11 +16,15 @@ module Enumerable
   def my_each_with_index
     return to_enum unless block_given?
 
+    arr = to_a.dup
     k = 0
-    (0...length).each do |i|
-      yield(self[i], k)
+    i = 0
+    while i < arr.length
+      yield(arr[i], k)
+      i += 1
       k += 1
     end
+    self
   end
 
   def my_select(&block)
@@ -81,20 +85,19 @@ module Enumerable
     result
   end
 
-  def my_inject(element = 0)
-    return true unless block_given?
-
-    result = element
-    my_each do |i|
-      result = yield(result, i)
+  def my_inject(maya = nil, sym = nil)
+    return my_inject(nil, maya) if maya.is_a? Symbol
+    
+    return my_inject(maya) { |m, e| :+.to_proc.call(m, e) } unless sym.nil?
+    
+    my_each { |e| maya = maya.nil? ? first : yield(maya, e) }
+    maya
     end
-    result
+
   end
   
-end
-
 def multiply_els(array)
-  array.my_inject(1) { |x, y| x * y }
+   array.my_inject(1) { |x, y| x * y }
 end
 
 #arr = [1, 2, 3, 4]
@@ -134,9 +137,9 @@ end
 
 # p ['car', 'bear', 'boy'].my_none?(/t/)
 
-# p [5, 6, 7, 8, 9, 10].inject { |sum, n| sum + n }
+#  p [5, 6, 7, 8, 9, 10].inject { |sum, n| sum + n }
 
-# p [5, 6, 7, 8, 9, 10].inject(:+)
+#  p [5, 6, 7, 8, 9, 10].inject(:+)
 
 # puts arr.my_all?(3)
 
@@ -201,12 +204,34 @@ end
 
 #p multiply_els([2, 4, 5]) #=> 40
 
-ary = [1, 2, 4, 2]
-p ary.my_count               
-#=> 4
-p ary.my_count(2)            
-#=> 2
-p ary.my_count{ |x| x%2==0 } 
-#=> 3
-p (0..9).my_count
-#=> 10
+# ary = [1, 2, 4, 2]
+# p ary.my_count               
+# #=> 4
+# p ary.my_count(2)            
+# #=> 2
+# p ary.my_count{ |x| x%2==0 } 
+# #=> 3
+# p (0..9).my_count
+# #=> 10
+
+# p [1, 2, 3, 4, 4, 5].my_inject(:+)
+# p [1, 2, 3, 4, 4, 5].inject(:+)
+
+# Sum some numbers
+p (5..10).my_inject(:+)
+#=> 45
+# Same using a block and inject
+p (5..10).my_inject { |sum, n| sum + n }
+#=> 45
+# Multiply some numbers
+p (5..10).my_inject(1, :*) 
+#=> 151200
+# Same using a block
+p (5..10).my_inject(1) { |product, n| product * n } 
+#=> 151200
+# find the longest word
+longest = %w[cat sheep bear].my_inject do |memo, word|
+  memo.length > word.length ? memo : word
+end
+p longest 
+#=> "sheep"
