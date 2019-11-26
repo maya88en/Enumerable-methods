@@ -88,8 +88,8 @@ module Enumerable
   def my_inject(maya = nil, sym = nil)
     return my_inject(nil, maya) if maya.is_a? Symbol
     
+    return my_inject(maya) { |m, e| :*.to_proc.call(m, e) } unless sym.nil?
     return my_inject(maya) { |m, e| :+.to_proc.call(m, e) } unless sym.nil?
-    
     my_each { |e| maya = maya.nil? ? first : yield(maya, e) }
     maya
     end
@@ -217,21 +217,27 @@ end
 # p [1, 2, 3, 4, 4, 5].my_inject(:+)
 # p [1, 2, 3, 4, 4, 5].inject(:+)
 
-# Sum some numbers
-p (5..10).my_inject(:+)
-#=> 45
-# Same using a block and inject
-p (5..10).my_inject { |sum, n| sum + n }
-#=> 45
-# Multiply some numbers
-p (5..10).my_inject(1, :*) 
-#=> 151200
-# Same using a block
-p (5..10).my_inject(1) { |product, n| product * n } 
-#=> 151200
-# find the longest word
-longest = %w[cat sheep bear].my_inject do |memo, word|
-  memo.length > word.length ? memo : word
-end
-p longest 
-#=> "sheep"
+# # Sum some numbers
+# p (5..10).my_inject(:+)
+# #=> 45
+# # Same using a block and inject
+# p (5..10).my_inject { |sum, n| sum + n }
+# #=> 45
+# # Multiply some numbers
+# p (5..10).my_inject(1, :*) 
+# #=> 151200
+# # Same using a block
+# p (5..10).my_inject(1) { |product, n| product * n } 
+# #=> 151200
+# # find the longest word
+# longest = %w[cat sheep bear].my_inject do |memo, word|
+#   memo.length > word.length ? memo : word
+# end
+# p longest 
+# #=> "sheep"
+
+ range = Range.new(5, 50)
+p range.inject(2, :*)
+p range.my_inject(2, :*)
+
+p [2, 3, 4].my_inject(:*)
