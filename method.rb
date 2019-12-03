@@ -237,7 +237,7 @@ end
 # #=> "sheep"
 
  range = Range.new(5, 50)
-p range.inject(2, :*)
-p range.my_inject(2, :*)
+p range.inject(2, :+)
+p range.my_inject(2, :+)
 
-p [2, 3, 4].my_inject(:*)
+p [2, 3, 4].my_inject(:+)
